@@ -3,55 +3,57 @@ import { patientService } from "../../services/api";
 
 // Initial state
 const initialState = {
-  patients: [],
-  selectedPatient: null,
-  status: "idle",
-  error: null,
+    patients: [],
+    selectedPatient: null,
+    status: "idle",
+    error: null,
 };
 
 // Async thunk for fetching patients
 export const fetchPatients = createAsyncThunk(
-  "patients/fetchPatients",
-  async () => {
-    // Using our patient service
-    return await patientService.getPatients();
-  }
+    "patients/fetchPatients",
+    async () => {
+        // Using our patient service
+        return await patientService.getPatients();
+    }
 );
 
 // Create the slice
 const patientSlice = createSlice({
-  name: "patients",
-  initialState,
-  reducers: {
-    // Action to select a patient
-    selectPatient: (state, action) => {
-      state.selectedPatient =
-        state.patients.find((patient) => patient.id === action.payload) || null;
+    name: "patients",
+    initialState,
+    reducers: {
+        // Action to select a patient
+        selectPatient: (state, action) => {
+            // state.selectedPatient =
+            //   state.patients.find((patient) => patient.id === action.payload) || null;
+            state.selectedPatient = state.patients[action.payload];
+        },
+        // Clear selected patient
+        clearSelectedPatient: (state) => {
+            state.selectedPatient = null;
+        },
     },
-    // Clear selected patient
-    clearSelectedPatient: (state) => {
-      state.selectedPatient = null;
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchPatients.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(fetchPatients.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                // Add patients to the state array
+                state.patients = action.payload;
+                // Select the first patient by default
+                if (action.payload.length > 0 && !state.selectedPatient) {
+                    state.selectedPatient = action.payload[0];
+                }
+            })
+            .addCase(fetchPatients.rejected, (state, action) => {
+                state.status = "failed";
+                state.error =
+                    action.error.message || "Failed to fetch patients";
+            });
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchPatients.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchPatients.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        // Add patients to the state array
-        state.patients = action.payload;
-        // Select the first patient by default
-        if (action.payload.length > 0 && !state.selectedPatient) {
-          state.selectedPatient = action.payload[0];
-        }
-      })
-      .addCase(fetchPatients.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message || "Failed to fetch patients";
-      });
-  },
 });
 
 // Export actions and reducer
