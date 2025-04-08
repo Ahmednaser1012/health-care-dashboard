@@ -46,16 +46,7 @@ const PatientInfo = ({ patient }) => {
                     </div>
                 </div>
 
-                {/* Address */}
-                <div className="flex items-start">
-                    <div className="mr-3 mt-0.5 bg-gray-200 p-2 rounded-full">
-                        <MapPin size={18} className="text-gray-900" />
-                    </div>
-                    <div>
-                        <p className="text-xs text-gray-500">Address</p>
-                        <p className="text-sm font-medium">{patient.address}</p>
-                    </div>
-                </div>
+                
 
                 {/* Phone */}
                 <div className="flex items-start">
@@ -70,16 +61,8 @@ const PatientInfo = ({ patient }) => {
                     </div>
                 </div>
 
-                {/* Email */}
-                <div className="flex items-start">
-                    <div className="mr-3 mt-0.5 bg-gray-200 p-2 rounded-full">
-                        <Mail size={18} className="text-gray-900" />
-                    </div>
-                    <div>
-                        <p className="text-xs text-gray-500">Email Address</p>
-                        <p className="text-sm font-medium">{patient.email}</p>
-                    </div>
-                </div>
+               
+                
 
                 {/* Insurance */}
                 <div className="flex items-start">

@@ -79,10 +79,10 @@ const Navbar = () => {
                 className="h-full w-full object-cover"
               />
             </div>
-            <span className="ml-2 text-sm font-medium text-gray-700  hidden md:inline-block">
+            <span className="ml-2 text-[10px] font-medium text-gray-700  hidden md:inline-block">
               Dr. Jane Simmons
               <br></br>
-              <span className="text-gray-400 text-xs ">
+              <span className="text-gray-400 text-[10px] ">
                 General Practitioner
               </span>{" "}
             </span>

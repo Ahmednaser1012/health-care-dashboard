@@ -114,16 +114,34 @@ const BloodPressureChart = ({ bloodPressureData }) => {
       <div className="mt-4 flex items-center">
         <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
         <span className="text-xs font-medium">Systolic</span>
-        <span className="ml-2 text-sm font-bold">160</span>
-        <span className="ml-2 text-xs text-gray-500">Higher than Average</span>
+        <span className="ml-2 text-sm font-bold">
+          {chartData.length > 0
+            ? chartData[chartData.length - 1].systolic
+            : "N/A"}
+        </span>
+        <span className="ml-2 text-xs text-gray-500">
+          {chartData.length > 0 &&
+          chartData[chartData.length - 1].systolic > 120
+            ? "Higher than Average"
+            : "Normal"}
+        </span>
       </div>
 
       {/* Diastolic indicator */}
       <div className="mt-2 flex items-center mb-1">
         <div className="w-2 h-2 rounded-full bg-purple-500 mr-2"></div>
         <span className="text-xs font-medium">Diastolic</span>
-        <span className="ml-2 text-sm font-bold">78</span>
-        <span className="ml-2 text-xs text-gray-500">Lower than Average</span>
+        <span className="ml-2 text-sm font-bold">
+          {chartData.length > 0
+            ? chartData[chartData.length - 1].diastolic
+            : "N/A"}
+        </span>
+        <span className="ml-2 text-xs text-gray-500">
+          {chartData.length > 0 &&
+          chartData[chartData.length - 1].diastolic < 80
+            ? "Lower than Average"
+            : "Normal"}
+        </span>
       </div>
     </div>
   );
