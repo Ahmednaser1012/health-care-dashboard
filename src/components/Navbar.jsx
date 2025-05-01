@@ -4,12 +4,10 @@ import { Menu, X } from "lucide-react";
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState("patients");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      setWindowWidth(window.innerWidth);
       if (window.innerWidth >= 768) {
         setMobileMenuOpen(false);
       }
@@ -58,7 +56,7 @@ const Navbar = () => {
             <div className="">
               <img
                 src="/Images/TestLogo.svg"
-                className="h-12 md:h-20 w-auto"
+                className="h-10 md:h-10 w-auto"
                 alt="Logo"
               />
             </div>
