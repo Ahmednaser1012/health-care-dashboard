@@ -18,25 +18,50 @@ const BloodPressureChart = ({ bloodPressureData }) => {
   useEffect(() => {
     if (!bloodPressureData || bloodPressureData.length === 0) {
       setChartData([]);
+      console.log("No blood pressure data available");
       return;
     }
 
-    // Format the data for the chart
-    const formattedData = bloodPressureData.map((item) => ({
-      date: new Date(item.date).toLocaleDateString("en-US", {
-        month: "short",
-        year: "2-digit",
-      }),
-      systolic: item.systolic,
-      diastolic: item.diastolic,
-    }));
+    console.log("Processing blood pressure data:", bloodPressureData);
 
-    // Sort by date
-    formattedData.sort((a, b) => {
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    });
+    try {
+      // Format the data for the chart
+      const formattedData = bloodPressureData.map((item) => {
+        // Check if the date is already formatted or needs formatting
+        let formattedDate;
+        try {
+          formattedDate = new Date(item.date).toLocaleDateString("en-US", {
+            month: "short",
+            year: "2-digit",
+          });
+        } catch (error) {
+          // If date parsing fails, use the date as is
+          formattedDate = item.date;
+        }
 
-    setChartData(formattedData);
+        return {
+          date: formattedDate,
+          systolic: item.systolic,
+          diastolic: item.diastolic,
+        };
+      });
+
+      // Sort by date
+      formattedData.sort((a, b) => {
+        try {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        } catch (error) {
+          // If date comparison fails, maintain original order
+          return 0;
+        }
+      });
+
+      console.log("Formatted chart data:", formattedData);
+      setChartData(formattedData);
+    } catch (error) {
+      console.error("Error processing blood pressure data:", error);
+      setChartData([]);
+    }
   }, [bloodPressureData]);
 
   // Custom tooltip for the chart
@@ -73,76 +98,85 @@ const BloodPressureChart = ({ bloodPressureData }) => {
         </select>
       </div>
 
-      <div className="h-64 ">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={chartData}
-            margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="date" tick={{ fontSize: 12 }} tickLine={false} />
-            <YAxis
-              domain={[60, 180]}
-              tick={{ fontSize: 12 }}
-              tickLine={false}
-              axisLine={false}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="systolic"
-              stroke="#ef4444"
-              strokeWidth={2}
-              dot={{ r: 3 }}
-              activeDot={{ r: 5 }}
-              name="Systolic"
-            />
-            <Line
-              type="monotone"
-              dataKey="diastolic"
-              stroke="#8b5cf6"
-              strokeWidth={2}
-              dot={{ r: 3 }}
-              activeDot={{ r: 5 }}
-              name="Diastolic"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+      <div className="h-64">
+        {chartData.length > 0 ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 12 }} tickLine={false} />
+              <YAxis
+                domain={[60, 180]}
+                tick={{ fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="systolic"
+                stroke="#ef4444"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                activeDot={{ r: 5 }}
+                name="Systolic"
+              />
+              <Line
+                type="monotone"
+                dataKey="diastolic"
+                stroke="#8b5cf6"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                activeDot={{ r: 5 }}
+                name="Diastolic"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <p className="text-gray-500">No blood pressure data available</p>
+              <p className="text-sm text-gray-400">
+                Please check the patient's records
+              </p>
+            </div>
+          </div>
+        )}
       </div>
-      {/* Systolic indicator */}
-      <div className="mt-4 flex items-center">
-        <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
-        <span className="text-xs font-medium">Systolic</span>
-        <span className="ml-2 text-sm font-bold">
-          {chartData.length > 0
-            ? chartData[chartData.length - 1].systolic
-            : "N/A"}
-        </span>
-        <span className="ml-2 text-xs text-gray-500">
-          {chartData.length > 0 &&
-          chartData[chartData.length - 1].systolic > 120
-            ? "Higher than Average"
-            : "Normal"}
-        </span>
-      </div>
+      {chartData.length > 0 && (
+        <>
+          {/* Systolic indicator */}
+          <div className="mt-4 flex items-center">
+            <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
+            <span className="text-xs font-medium">Systolic</span>
+            <span className="ml-2 text-sm font-bold">
+              {chartData[chartData.length - 1].systolic || "N/A"}
+            </span>
+            <span className="ml-2 text-xs text-gray-500">
+              {chartData[chartData.length - 1].systolic > 120
+                ? "Higher than Average"
+                : "Normal"}
+            </span>
+          </div>
 
-      {/* Diastolic indicator */}
-      <div className="mt-2 flex items-center mb-1">
-        <div className="w-2 h-2 rounded-full bg-purple-500 mr-2"></div>
-        <span className="text-xs font-medium">Diastolic</span>
-        <span className="ml-2 text-sm font-bold">
-          {chartData.length > 0
-            ? chartData[chartData.length - 1].diastolic
-            : "N/A"}
-        </span>
-        <span className="ml-2 text-xs text-gray-500">
-          {chartData.length > 0 &&
-          chartData[chartData.length - 1].diastolic < 80
-            ? "Lower than Average"
-            : "Normal"}
-        </span>
-      </div>
+          {/* Diastolic indicator */}
+          <div className="mt-2 flex items-center mb-1">
+            <div className="w-2 h-2 rounded-full bg-purple-500 mr-2"></div>
+            <span className="text-xs font-medium">Diastolic</span>
+            <span className="ml-2 text-sm font-bold">
+              {chartData[chartData.length - 1].diastolic || "N/A"}
+            </span>
+            <span className="ml-2 text-xs text-gray-500">
+              {chartData[chartData.length - 1].diastolic < 80
+                ? "Lower than Average"
+                : "Normal"}
+            </span>
+          </div>
+        </>
+      )}
     </div>
   );
 };

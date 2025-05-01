@@ -3,8 +3,8 @@ import PatientInfo from "./PatientInfo";
 import VitalSigns from "./VitalSigns";
 import BloodPressureChart from "./BloodPressureChart";
 import { useState, useEffect } from "react";
-import DiagnosticTable from "./DiagnosticTable";
 import LabResults from "./LabResults";
+import DiagnosticTable from "./DiagnosticTable";
 
 const Dashboard = () => {
   const { selectedPatient, status, error } = useSelector(
@@ -13,41 +13,118 @@ const Dashboard = () => {
   console.log(selectedPatient);
 
   const [bloodPressureData, setBloodPressureData] = useState();
+  const [labResultsData, setLabResultsData] = useState([]);
+  const [diagnosticData, setDiagnosticData] = useState([]);
 
+  // Process all patient data in a single useEffect to avoid race conditions
   useEffect(() => {
-    const data = selectedPatient?.diagnosis_history.map((item) => {
-      return {
-        date: `${item.month}-${item.year}`,
-        systolic: item.blood_pressure.systolic.value,
-        diastolic: item.blood_pressure.diastolic.value,
-        heartrate: item.heart_rate.value,
-        respiratoryRate: item.respiratory_rate.value,
-        temperature: item.temperature.value,
-      };
-    });
+    if (!selectedPatient) return;
 
-    setBloodPressureData(data);
-  }, [selectedPatient]);
+    console.log("Selected patient data:", selectedPatient);
 
-  useEffect(() => {
-    const data = selectedPatient?.lab_results.map((item) => {
-      return {
-        labTest: item, // اسم الفحص فقط
-        result: "Result not available", // قيمة ثابتة لعدم وجود النتيجة
-      };
-    });
-    setBloodPressureData(data);
-  }, [selectedPatient]);
+    // Process blood pressure data
+    if (
+      selectedPatient?.diagnosis_history &&
+      selectedPatient.diagnosis_history.length > 0
+    ) {
+      try {
+        const bpData = selectedPatient.diagnosis_history.map((item) => {
+          return {
+            date: `${item.month}-${item.year}`,
+            systolic: item.blood_pressure.systolic.value,
+            diastolic: item.blood_pressure.diastolic.value,
+            heartRate: item.heart_rate.value,
+            respiratoryRate: item.respiratory_rate.value,
+            temperature: item.temperature.value,
+          };
+        });
+        setBloodPressureData(bpData);
+        console.log("Blood pressure data from diagnosis history:", bpData);
+      } catch (error) {
+        console.error("Error processing diagnosis history:", error);
+      }
+    } else if (selectedPatient?.vitalSigns?.bloodPressure?.history) {
+      // Fallback to use the vitalSigns data structure if available
+      setBloodPressureData(selectedPatient.vitalSigns.bloodPressure.history);
+      console.log(
+        "Using vitalSigns blood pressure history:",
+        selectedPatient.vitalSigns.bloodPressure.history
+      );
+    } else {
+      console.log("No blood pressure data found in patient record");
+      setBloodPressureData([]);
+    }
 
-  useEffect(() => {
-    const data = selectedPatient?.diagnostic_list.map((item) => {
-      return {
-        name: item.name,
-        description: item.description,
-        status: item.status,
-      };
-    });
-    setBloodPressureData(data);
+    // Process lab results data
+    if (
+      selectedPatient?.lab_results &&
+      selectedPatient.lab_results.length > 0
+    ) {
+      try {
+        const labData = selectedPatient.lab_results.map((item) => {
+          return {
+            labTest: item, // Test name only
+            result: "Result not available", // Fixed value for missing result
+          };
+        });
+        setLabResultsData(labData);
+        console.log("Lab results data:", labData);
+      } catch (error) {
+        console.error("Error processing lab results:", error);
+        setLabResultsData([]);
+      }
+    } else {
+      setLabResultsData([]);
+    }
+
+    // Process diagnostic data
+    if (
+      selectedPatient?.diagnostic_list &&
+      selectedPatient.diagnostic_list.length > 0
+    ) {
+      try {
+        const diagData = selectedPatient.diagnostic_list.map((item) => {
+          return {
+            name: item.name,
+            description: item.description,
+            status: item.status,
+          };
+        });
+        setDiagnosticData(diagData);
+        console.log("Diagnostic data:", diagData);
+      } catch (error) {
+        console.error("Error processing diagnostic data:", error);
+        setDiagnosticData([]);
+      }
+    } else if (
+      selectedPatient?.diagnosis_history &&
+      selectedPatient.diagnosis_history.length > 0 &&
+      selectedPatient.diagnosis_history[
+        selectedPatient.diagnosis_history.length - 1
+      ]?.diagnostic_list
+    ) {
+      // Try to get diagnostic data from the latest diagnosis history entry
+      try {
+        const latestDiagnosis =
+          selectedPatient.diagnosis_history[
+            selectedPatient.diagnosis_history.length - 1
+          ];
+        const diagData = latestDiagnosis.diagnostic_list.map((item) => {
+          return {
+            name: item.name,
+            description: item.description,
+            status: item.status,
+          };
+        });
+        setDiagnosticData(diagData);
+        console.log("Diagnostic data from history:", diagData);
+      } catch (error) {
+        console.error("Error processing diagnostic data from history:", error);
+        setDiagnosticData([]);
+      }
+    } else {
+      setDiagnosticData([]);
+    }
   }, [selectedPatient]);
 
   // Handle loading state
@@ -95,35 +172,41 @@ const Dashboard = () => {
           </h2>
 
           {/* Blood Pressure Chart */}
-          <BloodPressureChart
-            // bloodPressureData={
-            //     selectedPatient?.vitalSigns?.bloodPressure?.history
-            // }
-            bloodPressureData={bloodPressureData}
-          />
+          <BloodPressureChart bloodPressureData={bloodPressureData} />
           {/* Vital Signs Cards */}
-          <VitalSigns
-            vitalSigns={
-              selectedPatient?.diagnosis_history[
-                selectedPatient?.diagnosis_history.length - 1
-              ]
-            }
-          />
-
-          {/* <DiagnosticTable
-            diagnoses={
-              selectedPatient?.diagnosis_history[
-                selectedPatient?.diagnosis_history.length - 1
-              ]?.diagnostic_list || []
-            }
-          /> */}
+          {selectedPatient?.diagnosis_history &&
+          selectedPatient.diagnosis_history.length > 0 ? (
+            <VitalSigns
+              vitalSigns={
+                selectedPatient.diagnosis_history[
+                  selectedPatient.diagnosis_history.length - 1
+                ]
+              }
+            />
+          ) : selectedPatient?.vitalSigns ? (
+            <VitalSigns vitalSigns={selectedPatient.vitalSigns} />
+          ) : (
+            <div className="p-4 bg-gray-100 rounded-lg text-center">
+              <p className="text-gray-500">No vital signs data available</p>
+            </div>
+          )}
+        </div>
+        {/* Diagnostic Table */}
+        <div className="mt-5 mb-8">
+          <DiagnosticTable diagnoses={diagnosticData} />
         </div>
       </div>
 
       {/* Right column - Patient information */}
       <div className="lg:col-span-1 space-y-6">
         <PatientInfo patient={selectedPatient} />
-        <LabResults labTests={selectedPatient?.lab_results || []} />
+        <LabResults
+          labTests={
+            labResultsData.length > 0
+              ? labResultsData
+              : selectedPatient?.lab_results || []
+          }
+        />
       </div>
     </div>
   );
