@@ -1,0 +1,13 @@
+warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/README.md b/README.md[m
+[1mindex 9d4dd70..60bf1aa 100644[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@ -1,6 +1,6 @@[m
+ # Healthcare Dashboard[m
+ [m
+[31m-![Healthcare Dashboard](/images/Healthcare%20Dashboard.png)[m
+[32m+[m[32m![Healthcare Dashboard](./public/Images/HealthcareDashboard.png)[m
+ [m
+ ## 📋 Overview[m
+ [m
