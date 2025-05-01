@@ -1,6 +1,6 @@
 # Healthcare Dashboard
 
-![Healthcare Dashboard](./public/Images/Healthcare%20Dashboard.png)
+![Healthcare Dashboard](/Images/Healthcare%20Dashboard.png)
 
 ## 📋 Overview
 

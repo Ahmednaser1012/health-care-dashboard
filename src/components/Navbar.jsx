@@ -24,28 +24,28 @@ const Navbar = () => {
     {
       id: "overview",
       label: "Overview",
-      img: "../../public/Images/home_FILL0_wght300_GRAD0_opsz24.svg",
+      img: "/Images/home_FILL0_wght300_GRAD0_opsz24.svg",
     },
 
     {
       id: "patients",
       label: "Patients",
-      img: "../../public/Images/group_FILL0_wght300_GRAD0_opsz24.svg",
+      img: "/Images/group_FILL0_wght300_GRAD0_opsz24.svg",
     },
     {
       id: "schedule",
       label: "Schedule",
-      img: "../../public/Images/calendar_today_FILL0_wght300_GRAD0_opsz24.svg",
+      img: "/Images/calendar_today_FILL0_wght300_GRAD0_opsz24.svg",
     },
     {
       id: "message",
       label: "Message",
-      img: "../../public/Images/chat_bubble_FILL0_wght300_GRAD0_opsz24.svg",
+      img: "/Images/chat_bubble_FILL0_wght300_GRAD0_opsz24.svg",
     },
     {
       id: "transactions",
       label: "Transactions",
-      img: "../../public/Images/credit_card_FILL0_wght300_GRAD0_opsz24.svg",
+      img: "/Images/credit_card_FILL0_wght300_GRAD0_opsz24.svg",
     },
   ];
 
@@ -57,7 +57,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <div className="">
               <img
-                src="../../public/Images/TestLogo.svg"
+                src="/Images/TestLogo.svg"
                 className="h-12 md:h-20 w-auto"
                 alt="Logo"
               />
@@ -98,7 +98,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <div className="h-8 w-8 rounded-full bg-gray-200 overflow-hidden">
               <img
-                src="../../public/Images/senior-woman-doctor-and-portrait-smile-for-health-2023-11-27-05-18-16-utc.png"
+                src="/Images/senior-woman-doctor-and-portrait-smile-for-health-2023-11-27-05-18-16-utc.png"
                 alt="User avatar"
                 className="h-full w-full object-cover"
               />
@@ -113,14 +113,14 @@ const Navbar = () => {
             <span className="text-gray-500 ml-4 hidden md:inline-block">|</span>
             <span className="hidden md:inline-block">
               <img
-                src="../../public/Images/settings_FILL0_wght300_GRAD0_opsz24.png"
+                src="/Images/settings_FILL0_wght300_GRAD0_opsz24.png"
                 className="mx-3 w-3 cursor-pointer"
                 alt="Settings"
               />
             </span>
             <span className="hidden md:inline-block">
               <img
-                src="../../public/Images/more_vert_FILL0_wght300_GRAD0_opsz24@2x.png"
+                src="/Images/more_vert_FILL0_wght300_GRAD0_opsz24@2x.png"
                 className="mx-1 w-1 cursor-pointer"
                 alt="More"
               />
@@ -154,7 +154,7 @@ const Navbar = () => {
           <div className="mt-4 pt-4 border-t border-gray-100">
             <div className="flex items-center px-4 py-2">
               <img
-                src="../../public/Images/settings_FILL0_wght300_GRAD0_opsz24.png"
+                src="/Images/settings_FILL0_wght300_GRAD0_opsz24.png"
                 className="w-5 h-5 mr-3"
                 alt="Settings"
               />
@@ -162,7 +162,7 @@ const Navbar = () => {
             </div>
             <div className="flex items-center px-4 py-2">
               <img
-                src="../../public/Images/more_vert_FILL0_wght300_GRAD0_opsz24@2x.png"
+                src="/Images/more_vert_FILL0_wght300_GRAD0_opsz24@2x.png"
                 className="w-5 h-5 mr-3"
                 alt="More"
               />
