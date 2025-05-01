@@ -58,6 +58,95 @@
 import { TreesIcon as Lungs, Thermometer, Heart } from "lucide-react";
 
 const VitalSigns = ({ vitalSigns }) => {
+  // Check if vitalSigns is available
+  if (!vitalSigns) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-gray-100 p-4 rounded-lg shadow-sm col-span-3 text-center">
+          <p className="text-gray-500">No vital signs data available</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check which data structure we're dealing with
+  const isNewFormat =
+    vitalSigns.respiratory_rate &&
+    vitalSigns.heart_rate &&
+    vitalSigns.temperature;
+  const isOldFormat =
+    vitalSigns.respiratoryRate !== undefined &&
+    vitalSigns.heartRate !== undefined;
+
+  // Get respiratory rate value
+  const getRespiratoryRate = () => {
+    if (isNewFormat && vitalSigns.respiratory_rate) {
+      return vitalSigns.respiratory_rate.value;
+    } else if (isOldFormat) {
+      return vitalSigns.respiratoryRate;
+    } else if (vitalSigns.respiratoryRate) {
+      return vitalSigns.respiratoryRate;
+    }
+    return "N/A";
+  };
+
+  // Get heart rate value
+  const getHeartRate = () => {
+    if (isNewFormat && vitalSigns.heart_rate) {
+      return vitalSigns.heart_rate.value;
+    } else if (isOldFormat) {
+      return vitalSigns.heartRate;
+    } else if (vitalSigns.heartRate) {
+      return vitalSigns.heartRate;
+    }
+    return "N/A";
+  };
+
+  // Get temperature value
+  const getTemperature = () => {
+    if (isNewFormat && vitalSigns.temperature) {
+      return vitalSigns.temperature.value;
+    } else if (isOldFormat) {
+      return vitalSigns.temperature;
+    } else if (vitalSigns.temperature) {
+      return vitalSigns.temperature;
+    }
+    return "N/A";
+  };
+
+  // Get respiratory rate status
+  const getRespiratoryRateStatus = () => {
+    const value = getRespiratoryRate();
+    if (value === "N/A") return "Unknown";
+    return value > 20
+      ? "Higher than Average"
+      : value < 12
+      ? "Lower than Average"
+      : "Normal";
+  };
+
+  // Get heart rate status
+  const getHeartRateStatus = () => {
+    const value = getHeartRate();
+    if (value === "N/A") return "Unknown";
+    return value > 100
+      ? "Higher than Average"
+      : value < 60
+      ? "Lower than Average"
+      : "Normal";
+  };
+
+  // Get temperature status
+  const getTemperatureStatus = () => {
+    const value = getTemperature();
+    if (value === "N/A") return "Unknown";
+    return value > 99
+      ? "Higher than Average"
+      : value < 97
+      ? "Lower than Average"
+      : "Normal";
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {/* Respiratory Rate Card */}
@@ -70,15 +159,10 @@ const VitalSigns = ({ vitalSigns }) => {
         </div>
         <div className="mt-2">
           <p className="text-2xl font-bold text-gray-800">
-            {vitalSigns?.respiratory_rate.value}
-            bpm
+            {getRespiratoryRate()} bpm
           </p>
           <p className="text-xs text-gray-500 mt-1">
-            {vitalSigns?.respiratory_rate.value > 20
-              ? "Higher than Average"
-              : vitalSigns?.respiratory_rate.value < 12
-              ? "Lower than Average"
-              : "Normal"}
+            {getRespiratoryRateStatus()}
           </p>
         </div>
       </div>
@@ -91,15 +175,9 @@ const VitalSigns = ({ vitalSigns }) => {
         </div>
         <div className="mt-2">
           <p className="text-2xl font-bold text-gray-800">
-            {vitalSigns?.temperature.value}°F
+            {getTemperature()}°F
           </p>
-          <p className="text-xs text-gray-500 mt-1">
-            {vitalSigns?.temperature.value > 99
-              ? "Higher than Average"
-              : vitalSigns?.temperature.value < 97
-              ? "Lower than Average"
-              : "Normal"}
-          </p>
+          <p className="text-xs text-gray-500 mt-1">{getTemperatureStatus()}</p>
         </div>
       </div>
 
@@ -111,15 +189,9 @@ const VitalSigns = ({ vitalSigns }) => {
         </div>
         <div className="mt-2">
           <p className="text-2xl font-bold text-gray-800">
-            {vitalSigns?.heart_rate.value} bpm
+            {getHeartRate()} bpm
           </p>
-          <p className="text-xs text-gray-500 mt-1">
-            {vitalSigns?.heart_rate.value > 100
-              ? "Higher than Average"
-              : vitalSigns?.heart_rate.value < 60
-              ? "Lower than Average"
-              : "Normal"}
-          </p>
+          <p className="text-xs text-gray-500 mt-1">{getHeartRateStatus()}</p>
         </div>
       </div>
     </div>

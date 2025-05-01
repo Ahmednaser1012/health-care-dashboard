@@ -16,7 +16,7 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className="flex h-full bg-gray-50">
+    <div className="flex h-screen bg-gray-50">
       <div className="flex flex-col flex-1 overflow-hidden">
         <Navbar />
         <main className="flex justify-center gap-8 overflow-y-auto p-4">

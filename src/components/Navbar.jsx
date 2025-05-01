@@ -1,8 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState("patients");
-  // const { selectedPatient } = useSelector((state) => state.patients)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+      if (window.innerWidth >= 768) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Tabs for the navigation
   const tabs = [
@@ -35,7 +50,7 @@ const Navbar = () => {
   ];
 
   return (
-    <header className=" bg-white m-3 border-b rounded-full border-gray-200">
+    <header className="bg-white m-3 border-b rounded-lg md:rounded-full border-gray-200 relative">
       <div className="flex items-center justify-between px-4 py-2">
         {/* Logo */}
         <div className="flex items-center">
@@ -43,18 +58,27 @@ const Navbar = () => {
             <div className="">
               <img
                 src="../../public/Images/TestLogo.svg"
-                className="h-20 w-50 "
-              ></img>
+                className="h-12 md:h-20 w-auto"
+                alt="Logo"
+              />
             </div>
           </div>
         </div>
+
+        {/* Mobile menu button */}
+        <button
+          className="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
 
         {/* Navigation tabs - desktop */}
         <nav className="hidden md:flex space-x-1">
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              className={` px-4 py-2 rounded-full text-sm font-medium cursor-pointer ${
+              className={`px-4 py-2 rounded-full text-sm font-medium cursor-pointer transition-colors ${
                 activeTab === tab.id
                   ? "bg-teal-500 text-white"
                   : "text-gray-600 hover:bg-gray-100"
@@ -62,7 +86,7 @@ const Navbar = () => {
               onClick={() => setActiveTab(tab.id)}
             >
               <div className="flex justify-between items-center gap-1">
-                <img src={tab.img} alt={tab.label} className="w-5 h-5  " />
+                <img src={tab.img} alt={tab.label} className="w-5 h-5" />
                 {tab.label}
               </div>
             </button>
@@ -70,7 +94,7 @@ const Navbar = () => {
         </nav>
 
         {/* User profile and notifications */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
           <div className="flex items-center">
             <div className="h-8 w-8 rounded-full bg-gray-200 overflow-hidden">
               <img
@@ -79,29 +103,74 @@ const Navbar = () => {
                 className="h-full w-full object-cover"
               />
             </div>
-            <span className="ml-2 text-[10px] font-medium text-gray-700  hidden md:inline-block">
+            <span className="ml-2 text-[10px] font-medium text-gray-700 hidden md:inline-block">
               Dr. Jane Simmons
-              <br></br>
-              <span className="text-gray-400 text-[10px] ">
+              <br />
+              <span className="text-gray-400 text-[10px]">
                 General Practitioner
-              </span>{" "}
+              </span>
             </span>
-            <span className="text-gray-500 ml-4">|</span>
-            <span>
+            <span className="text-gray-500 ml-4 hidden md:inline-block">|</span>
+            <span className="hidden md:inline-block">
               <img
                 src="../../public/Images/settings_FILL0_wght300_GRAD0_opsz24.png"
                 className="mx-3 w-3 cursor-pointer"
-              ></img>
+                alt="Settings"
+              />
             </span>
-            <span>
+            <span className="hidden md:inline-block">
               <img
                 src="../../public/Images/more_vert_FILL0_wght300_GRAD0_opsz24@2x.png"
                 className="mx-1 w-1 cursor-pointer"
-              ></img>
+                alt="More"
+              />
             </span>
           </div>
         </div>
       </div>
+
+      {/* Mobile navigation menu */}
+      {mobileMenuOpen && (
+        <nav className="md:hidden bg-white border-t border-gray-100 py-2 px-4 shadow-lg rounded-b-lg">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`w-full text-left px-4 py-3 rounded-md text-sm font-medium cursor-pointer mb-1 flex items-center ${
+                activeTab === tab.id
+                  ? "bg-teal-500 text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setMobileMenuOpen(false);
+              }}
+            >
+              <img src={tab.img} alt={tab.label} className="w-5 h-5 mr-3" />
+              {tab.label}
+            </button>
+          ))}
+
+          {/* Mobile user options */}
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <div className="flex items-center px-4 py-2">
+              <img
+                src="../../public/Images/settings_FILL0_wght300_GRAD0_opsz24.png"
+                className="w-5 h-5 mr-3"
+                alt="Settings"
+              />
+              <span className="text-gray-600">Settings</span>
+            </div>
+            <div className="flex items-center px-4 py-2">
+              <img
+                src="../../public/Images/more_vert_FILL0_wght300_GRAD0_opsz24@2x.png"
+                className="w-5 h-5 mr-3"
+                alt="More"
+              />
+              <span className="text-gray-600">More Options</span>
+            </div>
+          </div>
+        </nav>
+      )}
     </header>
   );
 };
